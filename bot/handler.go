@@ -54,9 +54,7 @@ func (h *Handler) onMessageCreate(s *discordgo.Session, m *discordgo.MessageCrea
 		}
 
 		embed := BuildEmbed(resp, rawURL)
-		_, err = s.ChannelMessageSendComplex(m.ChannelID, &discordgo.MessageSend{
-			Embeds: []*discordgo.MessageEmbed{embed},
-		})
+		_, err = s.ChannelMessageSendEmbedReply(m.ChannelID, embed, m.Reference())
 		if err != nil {
 			log.Printf("[%s] send embed: %v", provider.Name(), err)
 		}
