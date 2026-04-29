@@ -2,7 +2,6 @@ package postscraper
 
 import (
 	"context"
-	"fmt"
 )
 
 // Response holds standard oEmbed 1.0 fields shared by all providers.
@@ -12,8 +11,9 @@ type Response struct {
 	Title        string `json:"title,omitempty"`
 	AuthorName   string `json:"author_name,omitempty"`
 	AuthorURL    string `json:"author_url,omitempty"`
-	ProviderName string `json:"provider_name,omitempty"`
-	ProviderURL  string `json:"provider_url,omitempty"`
+	ProviderName    string `json:"provider_name,omitempty"`
+	ProviderURL     string `json:"provider_url,omitempty"`
+	ProviderIconURL string `json:"provider_icon_url,omitempty"`
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
 	ThumbnailW   int    `json:"thumbnail_width,omitempty"`
 	ThumbnailH   int    `json:"thumbnail_height,omitempty"`
@@ -32,12 +32,6 @@ type Provider interface {
 	Fetch(ctx context.Context, rawURL string) (*Response, error)
 }
 
-// Pinger is an optional interface a Provider can implement to verify
-// connectivity and credential validity before being registered.
-type Pinger interface {
-	Ping(ctx context.Context) error
-}
-
 // Registry resolves URLs to the first registered Provider that can handle them.
 type Registry struct {
 	providers []Provider
@@ -48,12 +42,7 @@ func NewRegistry() *Registry {
 }
 
 // Register appends a provider after verifying connectivity if it implements Pinger.
-func (r *Registry) Register(ctx context.Context, p Provider) error {
-	if pinger, ok := p.(Pinger); ok {
-		if err := pinger.Ping(ctx); err != nil {
-			return fmt.Errorf("%s: ping failed: %w", p.Name(), err)
-		}
-	}
+func (r *Registry) Register(p Provider) error {
 	r.providers = append(r.providers, p)
 	return nil
 }

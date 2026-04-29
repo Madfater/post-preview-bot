@@ -50,7 +50,8 @@ func BuildEmbed(resp *postscraper.Response, sourceURL string) *discordgo.Message
 
 	if resp.ProviderName != "" {
 		embed.Footer = &discordgo.MessageEmbedFooter{
-			Text: resp.ProviderName,
+			Text:    resp.ProviderName,
+			IconURL: resp.ProviderIconURL,
 		}
 	}
 

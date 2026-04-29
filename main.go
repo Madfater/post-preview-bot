@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"discord-bot/bot"
 	"discord-bot/config"
@@ -23,12 +21,10 @@ func main() {
 
 	registry := postscraper.NewRegistry()
 
-	pingCtx, pingCancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer pingCancel()
-	if err := registry.Register(pingCtx, threads.New()); err != nil {
+	if err := registry.Register(threads.New()); err != nil {
 		log.Fatalf("register threads provider: %v", err)
 	}
-	// To add more providers: registry.Register(pingCtx, instagram.New(cfg.MetaAccessToken))
+	// To add more providers: registry.Register(instagram.New(cfg.MetaAccessToken))
 
 	dg, err := discordgo.New("Bot " + cfg.DiscordToken)
 	if err != nil {

@@ -72,15 +72,16 @@ func (p *Provider) Fetch(ctx context.Context, rawURL string) (*postscraper.Respo
 	authorName, authorURL := extractAuthor(rawURL)
 
 	return &postscraper.Response{
-		Type:         "rich",
-		Version:      "1.0",
-		Title:        title,
-		AuthorName:   authorName,
-		AuthorURL:    authorURL,
-		ProviderName: "Threads",
-		ProviderURL:  "https://www.threads.com",
-		ThumbnailURL: og["og:image"],
-		HTML:         og["og:description"],
+		Type:            "rich",
+		Version:         "1.0",
+		Title:           title,
+		AuthorName:      authorName,
+		AuthorURL:       authorURL,
+		ProviderName:    "Threads",
+		ProviderURL:     "https://www.threads.com",
+		ProviderIconURL: "https://static.cdninstagram.com/rsrc.php/yp/r/GYVO97MXC-b.webp",
+		ThumbnailURL:    og["og:image"],
+		HTML:            og["og:description"],
 	}, nil
 }
 
