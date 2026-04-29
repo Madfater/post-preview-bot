@@ -6,13 +6,13 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o bot .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /discord-bot .
 
 FROM alpine:3.21
 
 RUN apk add --no-cache ca-certificates tzdata
 
 WORKDIR /app
-COPY --from=builder /app/bot .
+COPY --from=builder /discord-bot .
 
-ENTRYPOINT ["./bot"]
+ENTRYPOINT ["./discord-bot"]
