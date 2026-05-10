@@ -58,6 +58,7 @@ func (h *Handler) onMessageCreate(s *discordgo.Session, m *discordgo.MessageCrea
 			Embeds:          []*discordgo.MessageEmbed{embed},
 			Reference:       m.Reference(),
 			AllowedMentions: &discordgo.MessageAllowedMentions{RepliedUser: false},
+			Flags:           discordgo.MessageFlagsSuppressNotifications,
 		})
 		if err != nil {
 			log.Printf("[%s] send embed: %v", provider.Name(), err)
