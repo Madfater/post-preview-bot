@@ -1,6 +1,7 @@
 services:
   bot:
-    build: .
+    image: ghcr.io/madfater/post-preview-bot:latest
+    pull_policy: always
     restart: unless-stopped
     environment:
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
