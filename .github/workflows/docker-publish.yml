@@ -50,22 +50,31 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  notify:
+  deploy:
+    name: Notify hook to redeploy
+    needs: [build-and-push]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: build-and-push
     steps:
-      - name: Send redeploy webhook
+      - name: Trigger webhook
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
-          IMAGE: ghcr.io/${{ github.repository }}:latest
-          SHA: ${{ github.sha }}
         run: |
-          curl -fsS -X POST "$WEBHOOK_URL" \
+          set -euo pipefail
+          if [ -z "${WEBHOOK_URL}" ] || [ -z "${WEBHOOK_SECRET}" ]; then
+            echo "::error::WEBHOOK_URL or WEBHOOK_SECRET secret is not set"
+            exit 1
+          fi
+          http_code=$(curl -sS -o /tmp/resp.txt -w '%{http_code}' \
+            -X POST \
+            -H "X-Gitlab-Token: ${WEBHOOK_SECRET}" \
             -H "Content-Type: application/json" \
-            -H "X-Webhook-Secret: $WEBHOOK_SECRET" \
-            -d "$(jq -nc \
-              --arg image "$IMAGE" \
-              --arg sha "$SHA" \
-              --arg repo "${{ github.repository }}" \
-              '{image:$image, sha:$sha, repo:$repo}')"
+            -d '{"ref":"${{ github.ref }}","sha":"${{ github.sha }}"}' \
+            "${WEBHOOK_URL}")
+          echo "Dockhand response: HTTP ${http_code}"
+          cat /tmp/resp.txt || true
+          if [ "${http_code}" -lt 200 ] || [ "${http_code}" -ge 300 ]; then
+            echo "::error::Dockhand webhook returned non-2xx (${http_code})"
+            exit 1
+          fi
