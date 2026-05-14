@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"html"
 	"regexp"
 	"strings"
 
@@ -28,9 +29,10 @@ func BuildEmbed(resp *postscraper.Response, sourceURL string) *discordgo.Message
 
 	if resp.HTML != "" {
 		plain := htmlTagPattern.ReplaceAllString(resp.HTML, "")
+		plain = html.UnescapeString(plain)
 		plain = strings.TrimSpace(plain)
-		if len(plain) > 300 {
-			plain = plain[:300] + "…"
+		if runes := []rune(plain); len(runes) > 300 {
+			plain = string(runes[:300]) + "…"
 		}
 		embed.Description = plain
 	}

@@ -9,6 +9,7 @@ import (
 	"discord-bot/bot"
 	"discord-bot/config"
 	"discord-bot/postscraper"
+	"discord-bot/postscraper/instagram"
 	"discord-bot/postscraper/threads"
 	"github.com/bwmarrin/discordgo"
 )
@@ -24,7 +25,9 @@ func main() {
 	if err := registry.Register(threads.New()); err != nil {
 		log.Fatalf("register threads provider: %v", err)
 	}
-	// To add more providers: registry.Register(instagram.New(cfg.MetaAccessToken))
+	if err := registry.Register(instagram.New()); err != nil {
+		log.Fatalf("register instagram provider: %v", err)
+	}
 
 	dg, err := discordgo.New("Bot " + cfg.DiscordToken)
 	if err != nil {
