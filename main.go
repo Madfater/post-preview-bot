@@ -10,7 +10,7 @@ import (
 	"discord-bot/config"
 	"discord-bot/postscraper"
 	"discord-bot/postscraper/instagram"
-	"discord-bot/postscraper/threads"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -22,9 +22,11 @@ func main() {
 
 	registry := postscraper.NewRegistry()
 
-	if err := registry.Register(threads.New()); err != nil {
-		log.Fatalf("register threads provider: %v", err)
-	}
+	/*
+		if err := registry.Register(threads.New()); err != nil {
+			log.Fatalf("register threads provider: %v", err)
+		}
+	*/
 	if err := registry.Register(instagram.New()); err != nil {
 		log.Fatalf("register instagram provider: %v", err)
 	}
