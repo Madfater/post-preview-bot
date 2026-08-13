@@ -13,13 +13,14 @@ import (
 	"golang.org/x/net/html"
 )
 
-// matches both Threads URL formats:
+// matches Threads URL formats:
 //
 //	https://www.threads.com/@username/post/shortcode/
 //	https://www.threads.com/t/shortcode/
+//	https://www.threads.com/share/shortcode/
 //	and threads.net equivalents
 var urlPattern = regexp.MustCompile(
-	`https?://(?:www\.)?threads\.(?:com|net)/(?:@[\w.]+/post/[\w-]+|t/[\w-]+)/?`,
+	`https?://(?:www\.)?threads\.(?:com|net)/(?:@[\w.]+/post/[\w-]+|t/[\w-]+|share/[\w-]+)/?`,
 )
 
 var usernamePattern = regexp.MustCompile(`/@([\w.]+)/post/`)
@@ -69,7 +70,9 @@ func (p *Provider) Fetch(ctx context.Context, rawURL string) (*postscraper.Respo
 		return nil, fmt.Errorf("threads: no og:title found in page")
 	}
 
-	authorName, authorURL := extractAuthor(rawURL)
+	// share/ links carry no username; resolve it from the redirected
+	// canonical URL (@user/post/id) instead of the original share link.
+	authorName, authorURL := extractAuthor(resp.Request.URL.String())
 
 	return &postscraper.Response{
 		Type:            "rich",
