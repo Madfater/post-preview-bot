@@ -78,18 +78,14 @@ jobs:
       - name: Trigger webhook
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
         run: |
           set -euo pipefail
-          if [ -z "${WEBHOOK_URL}" ] || [ -z "${WEBHOOK_SECRET}" ]; then
-            echo "::error::WEBHOOK_URL or WEBHOOK_SECRET secret is not set"
+          if [ -z "${WEBHOOK_URL}" ]; then
+            echo "::error::WEBHOOK_URL secret is not set"
             exit 1
           fi
           http_code=$(curl -sS -o /tmp/resp.txt -w '%{http_code}' \
             -X POST \
-            -H "X-Gitlab-Token: ${WEBHOOK_SECRET}" \
-            -H "Content-Type: application/json" \
-            -d '{"ref":"${{ github.ref }}","sha":"${{ github.sha }}"}' \
             "${WEBHOOK_URL}")
           echo "Webhook response: HTTP ${http_code}"
           cat /tmp/resp.txt || true
