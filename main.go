@@ -40,7 +40,7 @@ func main() {
 		discordgo.IntentDirectMessages |
 		discordgo.IntentMessageContent
 
-	bot.New(dg, registry).Register()
+	bot.New(dg, registry, cfg.PreviewGracePeriod).Register()
 
 	if err := dg.Open(); err != nil {
 		log.Fatalf("discord open: %v", err)
