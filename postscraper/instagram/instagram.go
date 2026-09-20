@@ -28,6 +28,16 @@ var urlPattern = regexp.MustCompile(
 
 var usernamePattern = regexp.MustCompile(`instagram\.com/([\w.]+)/(?:p|reel|reels|tv)/`)
 
+// Instagram serves the plural /reels/ path only to logged-in viewers: for a
+// crawler it 302s to /accounts/login, whose HTML carries no meta tags. The
+// singular /reel/ path renders the post for crawlers, so rewrite that one
+// segment before fetching. The embed still links to the URL the user posted.
+var reelsPathPattern = regexp.MustCompile(`(instagram\.com/(?:[\w.]+/)?)reels/`)
+
+func normalizeURL(rawURL string) string {
+	return reelsPathPattern.ReplaceAllString(rawURL, "${1}reel/")
+}
+
 // Instagram's og:description always wraps the caption with
 // `N likes, M comments - user on date: "..."`. captionPattern peels
 // the prefix and the surrounding quotes off so the embed shows the
@@ -51,7 +61,9 @@ func (p *Provider) CanHandle(rawURL string) bool {
 }
 
 func (p *Provider) Fetch(ctx context.Context, rawURL string) (*postscraper.Response, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, rawURL, nil)
+	fetchURL := normalizeURL(rawURL)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fetchURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("instagram: build request: %w", err)
 	}
@@ -70,6 +82,12 @@ func (p *Provider) Fetch(ctx context.Context, rawURL string) (*postscraper.Respo
 		return nil, fmt.Errorf("instagram: unexpected status %d", resp.StatusCode)
 	}
 
+	// A redirect to the login wall means the crawler was turned away; say so
+	// rather than reporting a missing meta tag further down.
+	if strings.HasPrefix(resp.Request.URL.Path, "/accounts/login") {
+		return nil, fmt.Errorf("instagram: %q redirected to the login wall", fetchURL)
+	}
+
 	og, err := parseOGTags(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("instagram: parse HTML: %w", err)
@@ -77,10 +95,13 @@ func (p *Provider) Fetch(ctx context.Context, rawURL string) (*postscraper.Respo
 
 	title := og["twitter:title"]
 	if title == "" {
-		return nil, fmt.Errorf("instagram: no og:title found in page")
+		title = og["og:title"]
+	}
+	if title == "" {
+		return nil, fmt.Errorf("instagram: no title meta tag found in page")
 	}
 
-	authorName, authorURL := extractAuthor(rawURL, title)
+	authorName, authorURL := extractAuthor(fetchURL, title)
 
 	return &postscraper.Response{
 		Type:            "rich",
@@ -121,7 +142,7 @@ func parseOGTags(r io.Reader) (map[string]string, error) {
 					content = a.Val
 				}
 			}
-			if strings.HasPrefix(prop, "og:") || strings.HasPrefix(prop, "twitter:") && content != "" {
+			if (strings.HasPrefix(prop, "og:") || strings.HasPrefix(prop, "twitter:")) && content != "" {
 				og[prop] = content
 			}
 		}
