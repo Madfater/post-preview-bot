@@ -2,6 +2,8 @@ module discord-bot
 
 go 1.25.0
 
+toolchain go1.26.10
+
 require github.com/bwmarrin/discordgo v0.29.0
 
 require (
