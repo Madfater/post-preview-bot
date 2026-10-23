@@ -42,7 +42,7 @@ Ship changes with `/ship`. Work a GitHub issue with `/issue <number>`. Clean up 
 
 ## Project
 
-A Discord bot that replies with a rich embed preview for Threads and Instagram post links when Discord has not produced a preview of its own.
+A Discord bot that replies with a rich embed preview for Threads, Instagram and Bilibili post links when Discord has not produced a preview of its own.
 
 ## Commands
 
@@ -81,6 +81,8 @@ Discord message
 **`postscraper/provider.go`** — the extensibility contract. Defines the `Provider` interface (`Name`, `CanHandle`, `Fetch`), the shared `Response` struct (oEmbed 1.0-shaped fields), and `Registry`, which holds an ordered provider list and resolves URLs via first-match.
 
 **`postscraper/threads/`** and **`postscraper/instagram/`** — providers that fetch the post page with a crawler User-Agent and parse its Open Graph / Twitter meta tags. Despite the oEmbed-shaped `Response`, no oEmbed API is called and no access token is needed.
+
+**`postscraper/bilibili/`** — provider that reads Bilibili's public video-info JSON API (no token) instead of the page, which has no OG tags. `b23.tv` short links are resolved with one un-followed redirect.
 
 **`bot/handler.go`** — `MessageCreate` listener. `extractURLs` pulls previewable URLs from the message, the registry resolves each, and the work moves to a goroutine (`sendPreviews`) so the gateway handler never blocks. Scrapes run first so they overlap the grace period, then the source message is re-read once via `ChannelMessage` and each URL is judged independently. Errors are logged only — nothing is posted to the channel.
 

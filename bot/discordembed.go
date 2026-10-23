@@ -10,8 +10,10 @@ import (
 // hostAliases folds domains that serve the same content, so a link written one
 // way still matches the embed Discord built from the other.
 var hostAliases = map[string]string{
-	"threads.net": "threads.com",
-	"instagr.am":  "instagram.com",
+	"threads.net":    "threads.com",
+	"instagr.am":     "instagram.com",
+	"m.bilibili.com": "bilibili.com",
+	"b23.tv":         "bilibili.com",
 }
 
 // urlKey is a URL reduced to the parts worth comparing: host and path.
