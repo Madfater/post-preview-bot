@@ -40,4 +40,4 @@ A Discord bot that watches messages for Threads, Instagram and Bilibili post lin
 - Embed `Type` is never inspected when matching official embeds; only richness (image, thumbnail, video or description) counts. A title-only embed means Discord's crawler was blocked, so the bot still posts.
 - URLs are matched to embeds by host and path via `makeURLKey`: the query, a trailing slash and `www.` are dropped, and `threads.net`, `instagr.am`, `m.bilibili.com` and `b23.tv` fold into their canonical hosts. Path case is kept because shortcodes are case-sensitive. When paths differ because Discord canonicalised a share or short link, a host-only match counts, but only if that URL is the sole link to its host in the message.
 - A failed re-read other than 404 degrades to posting, not to silence.
-- Adding a provider only touches its own package and one `registry.Register` line in `main.go`.
+- Adding a provider touches its own package and one `registry.Register` line in `main.go`, plus a `hostAliases` entry in `bot/discordembed.go` when the site has short or mobile hosts.
