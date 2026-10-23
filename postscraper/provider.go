@@ -6,21 +6,21 @@ import (
 
 // Response holds standard oEmbed 1.0 fields shared by all providers.
 type Response struct {
-	Type         string `json:"type"`
-	Version      string `json:"version"`
-	Title        string `json:"title,omitempty"`
-	AuthorName   string `json:"author_name,omitempty"`
-	AuthorURL    string `json:"author_url,omitempty"`
+	Type            string `json:"type"`
+	Version         string `json:"version"`
+	Title           string `json:"title,omitempty"`
+	AuthorName      string `json:"author_name,omitempty"`
+	AuthorURL       string `json:"author_url,omitempty"`
 	ProviderName    string `json:"provider_name,omitempty"`
 	ProviderURL     string `json:"provider_url,omitempty"`
 	ProviderIconURL string `json:"provider_icon_url,omitempty"`
-	ThumbnailURL string `json:"thumbnail_url,omitempty"`
-	ThumbnailW   int    `json:"thumbnail_width,omitempty"`
-	ThumbnailH   int    `json:"thumbnail_height,omitempty"`
-	Width        int    `json:"width,omitempty"`
-	Height       int    `json:"height,omitempty"`
-	HTML         string `json:"html,omitempty"`
-	URL          string `json:"url,omitempty"`
+	ThumbnailURL    string `json:"thumbnail_url,omitempty"`
+	ThumbnailW      int    `json:"thumbnail_width,omitempty"`
+	ThumbnailH      int    `json:"thumbnail_height,omitempty"`
+	Width           int    `json:"width,omitempty"`
+	Height          int    `json:"height,omitempty"`
+	HTML            string `json:"html,omitempty"`
+	URL             string `json:"url,omitempty"`
 }
 
 // Provider is the interface every oEmbed source must implement.

@@ -115,6 +115,12 @@ func TestHasOfficialEmbed(t *testing.T) {
 			Thumbnail: &discordgo.MessageEmbedThumbnail{URL: "https://i"},
 		}), postURL, false},
 		{
+			name:   "bilibili short link covered by canonical embed, sole url on host",
+			msg:    msg("https://b23.tv/abc123", rich("https://www.bilibili.com/video/BV1xrnz6gEVD")),
+			rawURL: "https://b23.tv/abc123",
+			want:   true,
+		},
+		{
 			name:   "canonicalised share link, sole url on host",
 			msg:    msg("https://www.instagram.com/share/xyz", rich("https://www.instagram.com/p/ABC/")),
 			rawURL: "https://www.instagram.com/share/xyz",

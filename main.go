@@ -9,6 +9,7 @@ import (
 	"discord-bot/bot"
 	"discord-bot/config"
 	"discord-bot/postscraper"
+	"discord-bot/postscraper/bilibili"
 	"discord-bot/postscraper/instagram"
 	"discord-bot/postscraper/threads"
 	"github.com/bwmarrin/discordgo"
@@ -27,6 +28,9 @@ func main() {
 	}
 	if err := registry.Register(instagram.New()); err != nil {
 		log.Fatalf("register instagram provider: %v", err)
+	}
+	if err := registry.Register(bilibili.New()); err != nil {
+		log.Fatalf("register bilibili provider: %v", err)
 	}
 
 	dg, err := discordgo.New("Bot " + cfg.DiscordToken)
