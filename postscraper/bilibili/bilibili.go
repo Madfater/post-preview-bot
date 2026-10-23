@@ -100,7 +100,7 @@ func parseResponse(r io.Reader) (*postscraper.Response, error) {
 		AuthorName:      d.Owner.Name,
 		ProviderName:    "Bilibili",
 		ProviderURL:     "https://www.bilibili.com",
-		ProviderIconURL: "https://www.bilibili.com/favicon.ico",
+		ProviderIconURL: "https://i0.hdslb.com/bfs/static/jinkela/long/images/512.png",
 		ThumbnailURL:    strings.Replace(d.Pic, "http://", "https://", 1),
 		HTML:            d.Desc,
 		URL:             "https://www.bilibili.com/video/" + d.BVID,
