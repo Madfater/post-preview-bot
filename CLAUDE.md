@@ -2,6 +2,48 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Rules
+
+1. No emoji anywhere: code, comments, docs, commits, PRs.
+2. No history in code or comments. Git and PRs hold the history.
+3. Code comments only describe what the code does and how it works, as bullet points.
+4. Knowledge lives in `docs/`.
+5. Scripts live in `script/` and are written in Python 3.10+ using only the standard library.
+6. Human in the loop: see below. It binds every skill and every session.
+7. Never verify your own work. Reviews go to a fresh-context agent.
+
+## Human in the loop
+
+- Local work runs without asking: reading, editing, running checks, committing, creating worktrees.
+- Stop for an explicit yes before anything that leaves the machine: push, PR create or edit, API writes, and logging in or submitting data through a browser on any site that is not local or a test environment.
+- Stop for an explicit yes before anything irreversible: deleting files, branches or worktrees, force operations, history rewrites.
+- Stop for an explicit yes when a check or review still fails after its retry budget.
+- A yes covers only the action it was asked for.
+- Merging is always done by the human.
+
+## Harness commands
+
+```bash
+python3 script/check.py                        # project checks, run before every commit
+python3 script/check_conventions.py --staged   # rules 1, 2, 4, 5 on staged changes
+python3 script/github.py --help                # GitHub API client, credentials in .env.skills
+```
+
+Ship changes with `/ship`. Work a GitHub issue with `/issue <number>`. Clean up after a merge with `/land`.
+
+## Docs routing
+
+| When | Read |
+| --- | --- |
+| Before changing code or finding where something lives | [docs/architecture.md](docs/architecture.md) |
+| Running /ship or /land, writing commits, delegating to agents | [docs/workflow.md](docs/workflow.md) |
+| Setting up credentials, installing or updating the harness | [docs/setup.md](docs/setup.md) |
+| Looking for any other knowledge | [docs/README.md](docs/README.md) |
+
+## Project
+
+A Discord bot that replies with a rich embed preview for Threads and Instagram post links when Discord has not produced a preview of its own.
+
 ## Commands
 
 ```bash
